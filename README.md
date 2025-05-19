@@ -1,13 +1,35 @@
 # Agentic AI Writer
 
-## Get started
-``` sh
-# create a context.txt file with a list of URLs inside the `context` folder, set ANTHROPIC_API_KEY
-# running agent loop
-UV_ENV_FILE=../.env uv run ../agent_loop.py "write an article on software engineering management extracting the absolute best insights from this text. be concise. you are a senior cracked software engineer whose reputation is widely admired online"
+The agentic writer will take in a **prompt**, a list of URLs (**context**), and a list of writing **criteria** (e.g. conciseness, accuracy).
 
-# running just one module
-UV_ENV_FILE=/path/to/.env uv run /path/to/writer.py "summarize all the context and list bullet points with your best insights"
+It will first parse all the **context** URLs to markdown, and include them with the input **prompt**. It will generate a draft and score it according to the **criteria**.
+
+This loop will repeat until the draft achieves a sufficiently high score in all criteria or until the max number of iterations is reached.
+
+## Get started
+
+``` sh
+# 1. set ANTHROPIC_API_KEY
+export ANTHROPIC_API_KEY="sk-ant-..." # the default model is anthropic's
+# if using an openai model, use OPENAI_API_KEY, if using another provider, use "<PROVIDER_NAME>_API_KEY"
+
+# 2. running agent loop
+aiwriter agent "write an article on software engineering management extracting the absolute best insights from these articles. be concise."
+
+# (optional) running simple essay writer
+aiwriter write "write a short poem"
+
+# (optional) add context URLs to be parsed and included in the prompt
+echo "
+blog.com/post1
+blog.com/post2
+blog.com/post3" > context.txt
+
+# (optional) add criteria to favor in the agent's writing
+echo "clarity,conciseness,relevance,engagement,accuracy" > criteria.txt  # this is the default criteria
+
+# (optional) change the LLM model
+export AIWRITER_MODEL="anthropic/claude-3-7-sonnet-latest"  # this is the default model
 ```
 
 ## API
