@@ -1,0 +1,10 @@
+# build directories
+build
+dist
+aiwriter.egg-info
+
+# environment
+.venv
+.test
+.env
+__pycache__
