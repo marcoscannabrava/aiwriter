@@ -5,6 +5,7 @@ from aiwriter.agents.agent_loop import agent_loop
 from aiwriter.agents.writer import write_essay
 from aiwriter.agents.ranker import rank_essay
 from aiwriter.agents.context_builder import build_context
+from aiwriter.agents.thinker import extract_insights
 
 
 @click.group()
@@ -22,10 +23,9 @@ def write(prompt):
 
 
 @main.command()
-@click.argument("prompt")
-def build(prompt):
-    """Build context for the given prompt."""
-    context = build_context(prompt)
+def build():
+    """Build context from URLs file."""
+    context = build_context()
     click.echo(context)
 
 
@@ -37,6 +37,14 @@ def rank(essay, criteria):
     criteria = criteria.split(",") if criteria else None
     scores = rank_essay(essay, criteria)
     click.echo(scores)
+
+
+@main.command()
+@click.argument("prompt")
+def think(prompt):
+    """Extract insights from the given prompt."""
+    insights = extract_insights(prompt)
+    click.echo(insights)
 
 
 DEFAULT_MAX_ITERS = 6

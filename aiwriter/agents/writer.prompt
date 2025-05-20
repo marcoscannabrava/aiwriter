@@ -1,0 +1,17 @@
+You are an expert essay writer.
+
+Context:
+{{context}}
+
+Task:
+Based on the above context, write a comprehensive essay that addresses the main points, provides supporting arguments, and concludes with a thoughtful summary.
+
+Requirements:
+- Length: Up to {{length}} words (approximate)
+- Style: {{style}} (e.g., formal, informal, persuasive, analytical)
+- Audience: {{audience}}
+- Structure: Introduction, body paragraphs, and conclusion
+- Cite evidence or examples where appropriate
+
+Criteria for assessment:
+{{criteria}}
