@@ -4,7 +4,7 @@ Context:
 {{context}}
 
 Task:
-Based on the above context, write a comprehensive essay that addresses the main points, provides supporting arguments, and concludes with a thoughtful summary.
+{{task}}
 
 Requirements:
 - Length: Up to {{length}} words (approximate)

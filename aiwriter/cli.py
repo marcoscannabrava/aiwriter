@@ -1,5 +1,5 @@
 import click
-
+import sys
 
 from aiwriter.agents.agent_loop import agent_loop
 from aiwriter.agents.writer import write_essay
@@ -13,12 +13,40 @@ def main():
     """CLI for the AI Writer."""
     pass
 
+length_option = click.option(
+    "--length",
+    default=1000,
+    help="Length of the essay in words. Default is 1000.",
+)
+style_option = click.option(
+    "--style",
+    default="informal and analytical",
+    help="Style of the essay. Default is 'informal and analytical'.",
+)
+audience_option = click.option(
+    "--audience",
+    default="sophisticated readers",
+    help="Target audience for the essay. Default is 'sophisticated readers'.",
+)
+rewrite_option = click.option(
+    "--rewrite",
+    is_flag=True,
+    help="If set, the essay will be rewritten instead of written from scratch.",
+)
 
 @main.command()
-@click.argument("prompt")
-def write(prompt):
+@click.option(
+    "--context",
+    default=sys.stdin,
+    help="Context for the essay. Default is to read from stdin.",
+)
+@length_option
+@style_option
+@audience_option
+@rewrite_option
+def write(context, length, style, audience, rewrite):
     """Write an essay based on the given prompt."""
-    essay = write_essay(prompt)
+    essay = write_essay(context, length, style, audience, rewrite)
     click.echo(essay)
 
 
@@ -31,11 +59,9 @@ def build():
 
 @main.command()
 @click.argument("essay")
-@click.argument("criteria", required=False)
-def rank(essay, criteria):
+def rank(essay):
     """Rank an essay based on the given criteria."""
-    criteria = criteria.split(",") if criteria else None
-    scores = rank_essay(essay, criteria)
+    scores = rank_essay(essay)
     click.echo(scores)
 
 
@@ -51,16 +77,18 @@ DEFAULT_MAX_ITERS = 6
 
 
 @main.command()
-@click.argument("prompt")
 @click.option(
     "--max-iters",
     default=DEFAULT_MAX_ITERS,
     help=f"Maximum number of iterations for the agent loop. Default is {DEFAULT_MAX_ITERS}.",
 )
-def agent(prompt, max_iters):
+@length_option
+@style_option
+@audience_option
+def agent(max_iters, length, style, audience):
     """Run the agent loop for the given prompt."""
-    agent_loop(prompt, max_iters)
-    click.echo(f"Agent loop completed for prompt: {prompt}")
+    agent_loop(max_iters, length, style, audience)
+    click.echo(f"Agent loop completed for prompt")
 
 
 if __name__ == "__main__":

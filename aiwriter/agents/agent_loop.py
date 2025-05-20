@@ -6,44 +6,42 @@ from aiwriter.env import DRAFTS_DIR
 
 SCORE_THRESHOLD = 8
 
-def iteration_prompt(prompt, essay, scores, threshold):
-    return f"""Given the following Essay and Scores, please improve all aspects of the essay scored at or below {threshold}.
-
-Prompt:
-{prompt}
-
-Essay:
-
-{essay}
-
-Scores:
-
-{scores}
-
----
-
-Examples:
-if clarity score needs to improve, use simpler words and shorter sentences;
-if conciseness score needs to improve, remove unnecessary words, phrases, and paragraphs;
-if relevance score needs to improve, remove irrelevant information;
-if engagement score needs to improve, add more interesting and engaging content;
-if accuracy score needs to improve, remove any uncertain information not present in the original essay.
-"""
 
 def all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
-    return all(float(v) > threshold for v in scores.__dict__.values() if isinstance(v, (int, float)))
+    return all(
+        float(v) > threshold
+        for v in scores.__dict__.values()
+        if isinstance(v, (int, float))
+    )
 
-def agent_loop(prompt: str, max_iters: int = 6):
+
+def agent_loop(
+    max_iters: int = 6,
+    length: int = 1000,
+    style: str = "informal and analytical",
+    audience: str = "sophisticated readers",
+):
     os.makedirs(DRAFTS_DIR, exist_ok=True)
-    essay_text = None
     scores = None
     for i in range(1, max_iters + 1):
         if i == 1:
             context = build_context()
-            essay = write_essay(context + prompt)
+            essay = write_essay(
+                context,
+                length=length,
+                style=style,
+                audience=audience,
+                rewrite=False,
+            )
         else:
-            essay = write_essay(iteration_prompt(prompt, essay_text, scores, SCORE_THRESHOLD))
-        essay_text = essay
+            essay = write_essay(
+                str(context),
+                length=length,
+                style=style,
+                audience=audience,
+                rewrite=True,
+            )
+        context = essay
         draft_path = f"{DRAFTS_DIR}/draft_{i}.md"
         with open(draft_path, "w") as f:
             f.write(str(essay))
@@ -53,7 +51,7 @@ def agent_loop(prompt: str, max_iters: int = 6):
         with open(score_path, "w") as f:
             f.write(str(scores))
 
-        print(f"Draft #{i} - {essay_text.title}")
+        print(f"Draft #{i} - {context.title}")
         print(f"Scores:\n\n{scores}")
 
         if all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
