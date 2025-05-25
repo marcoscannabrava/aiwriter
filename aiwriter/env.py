@@ -6,7 +6,7 @@ CONTEXT_FILE = os.getenv("AIWRITER_CONTEXT_FILE", "context.txt")
 CONTEXT_FULL_FILE = os.getenv("AIWRITER_CONTEXT_FULL_FILE", "full_context.txt")
 CONTEXT_DIR = os.getenv("AIWRITER_CONTEXT_DIR", "context")
 
-MODEL = os.getenv("AIWRITER_MODEL", "anthropic/claude-3-7-sonnet-latest")
+MODEL = os.getenv("AIWRITER_MODEL", "anthropic/claude-sonnet-4-20250514")
 ESSAY_FILE = os.getenv("AIWRITER_ESSAY_FILE", "essay.txt")
 
 CRITERIA = "clarity,conciseness,relevance,engagement,accuracy".split(",")

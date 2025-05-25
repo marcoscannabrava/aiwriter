@@ -16,6 +16,9 @@ class Insights(BaseModel):
 
     def __iter__(self):
         return iter(self.insights)
+    
+    def __str__(self):
+        return "\n\n".join([str(insight) for insight in self.insights])
 
 
 def extract_insights(context: str):

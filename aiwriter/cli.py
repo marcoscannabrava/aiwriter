@@ -1,7 +1,7 @@
 import click
 import sys
 
-from aiwriter.agents.agent_loop import agent_loop
+from aiwriter.agents.editor import agent_loop
 from aiwriter.agents.writer import write_essay
 from aiwriter.agents.ranker import rank_essay
 from aiwriter.agents.context_builder import build_context
@@ -85,7 +85,7 @@ DEFAULT_MAX_ITERS = 6
 @length_option
 @style_option
 @audience_option
-def agent(max_iters, length, style, audience):
+def editor(max_iters, length, style, audience):
     """Run the agent loop for the given prompt."""
     agent_loop(max_iters, length, style, audience)
     click.echo(f"Agent loop completed for prompt")

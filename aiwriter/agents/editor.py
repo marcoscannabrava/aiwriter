@@ -2,6 +2,7 @@ import os
 from aiwriter.agents.context_builder import build_context
 from aiwriter.agents.writer import write_essay
 from aiwriter.agents.ranker import rank_essay
+from aiwriter.agents.thinker import extract_insights
 from aiwriter.env import DRAFTS_DIR
 
 SCORE_THRESHOLD = 8
@@ -23,25 +24,17 @@ def agent_loop(
 ):
     os.makedirs(DRAFTS_DIR, exist_ok=True)
     scores = None
+    FULL_CONTEXT = build_context()
+    curr_context = FULL_CONTEXT
     for i in range(1, max_iters + 1):
-        if i == 1:
-            context = build_context()
-            essay = write_essay(
-                context,
-                length=length,
-                style=style,
-                audience=audience,
-                rewrite=False,
+        essay = write_essay(
+            str(curr_context),
+            length=length,
+            style=style,
+            audience=audience,
+            rewrite=i != 1,
             )
-        else:
-            essay = write_essay(
-                str(context),
-                length=length,
-                style=style,
-                audience=audience,
-                rewrite=True,
-            )
-        context = essay
+        curr_context = essay
         draft_path = f"{DRAFTS_DIR}/draft_{i}.md"
         with open(draft_path, "w") as f:
             f.write(str(essay))
@@ -51,9 +44,13 @@ def agent_loop(
         with open(score_path, "w") as f:
             f.write(str(scores))
 
-        print(f"Draft #{i} - {context.title}")
+        print(f"Draft #{i} - {curr_context.title}")
         print(f"Scores:\n\n{scores}")
 
         if all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
             print(f"All scores above {SCORE_THRESHOLD} at iteration {i}. Exiting loop.")
             break
+
+        if i > 3:
+            insights = extract_insights("SOURCE MATERIAL\n\n" + FULL_CONTEXT + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context) + "\n\n" + str(scores))
+            curr_context = "INSIGHTS\n\n" + str(insights) + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context)
