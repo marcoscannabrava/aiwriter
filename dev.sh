@@ -1,2 +1,2 @@
 alias build="uv build"
-alias pub="uv publish"
+alias publish="uv publish"

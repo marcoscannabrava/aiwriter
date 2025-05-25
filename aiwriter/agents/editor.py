@@ -52,6 +52,9 @@ def agent_loop(
             print(f"All scores above {SCORE_THRESHOLD} at iteration {i}. Exiting loop.")
             break
 
-        if i > 3:
+        if i > 2:
             insights = extract_insights("SOURCE MATERIAL\n\n" + FULL_CONTEXT + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context) + "\n\n" + str(scores))
+            insights_path = f"{DRAFTS_DIR}/draft_insights_{i}.md"
+            with open(insights_path, "w") as f:
+                f.write(str(insights))
             curr_context = "INSIGHTS\n\n" + str(insights) + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context)
