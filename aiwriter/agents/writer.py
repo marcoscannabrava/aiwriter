@@ -1,6 +1,7 @@
 import instructor
 from pydantic import BaseModel
-from aiwriter.env import MODEL
+from aiwriter.env import MODEL, WRITER_SYSTEM_PROMPT, CRITERIA
+
 
 class Essay(BaseModel):
     title: str
@@ -9,47 +10,41 @@ class Essay(BaseModel):
     def __str__(self):
         return f"Title: {self.title}\n\nContent:\n{self.content}"
 
+WRITE = "Based on the above context, write a comprehensive essay that addresses the main points, provides supporting arguments, and concludes with a thoughtful summary."
+REWRITE = "Based on the above context, rewrite the essay to improve the aspects of the criteria below. The rewritten essay should maintain the original meaning and intent while enhancing its overall quality."
 
-def write_essay(prompt: str):
-    """Pass prompt to LLM and return the response."""
+def write_essay(
+    context: str,
+    length: int = 1000,
+    style: str = "informal and analytical",
+    audience: str = "sophisticated readers",
+    rewrite: bool = False,
+) -> Essay:
+    """Given a context, length, style, and audience, this function generates an essay using an LLM.
+    
+    Args:
+        context (str): The context for the essay.
+        length (int): The length of the essay in words. Default is 1000.
+        style (str): The style of the essay. Default is "informal and analytical".
+        audience (str): The target audience for the essay. Default is "sophisticated readers".
+        rewrite (bool): If True, the function will rewrite the essay instead of writing a new one. Default is False.
+    """
     from typing import cast
 
     llm = instructor.from_provider(MODEL)
-    response = cast(Essay, llm.chat.completions.create(
-        messages=[{"role": "user", "content": prompt}],
-        response_model=Essay,
-    ))
-    return response
 
-def cli():
-    """Command line interface for the essay writer."""
-    import sys
-    import os
-    from aiwriter.env import CONTEXT_DIR, CONTEXT_FULL_FILE, ESSAY_FILE
-    from context_builder import build_context
-
-    if len(sys.argv) < 2:
-        print("Usage: python writer.py <prompt>")
-        sys.exit(1)
-
-    prompt = sys.argv[1]
-    try:
-        context_file = open(os.path.join(CONTEXT_DIR, CONTEXT_FULL_FILE), "r")
-        print("\n\nContext file already exists, reading it...\n\n")
-        context = context_file.read()
-    except FileNotFoundError:
-        context = build_context(prompt)
-    
-    try:
-        response_file = open(os.path.join(CONTEXT_DIR, ESSAY_FILE), "r")
-        print("\n\nResponse file already exists, reading it...\n\n")
-        essay = response_file.read()
-        print(essay)
-        return
-    except FileNotFoundError:
-        essay = write_essay(context)
-        open(ESSAY_FILE, "w").write(str(essay))
-        print(essay)
-
-if __name__ == "__main__":
-    cli()
+    prompt = (
+        WRITER_SYSTEM_PROMPT.replace("{{context}}", context)
+        .replace("{{length}}", str(length))
+        .replace("{{style}}", style)
+        .replace("{{audience}}", audience)
+        .replace("{{criteria}}", ", ".join(CRITERIA))
+        .replace("{{task}}", REWRITE if rewrite else WRITE)
+    )
+    return cast(
+        Essay,
+        llm.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            response_model=Essay,
+        ),
+    )

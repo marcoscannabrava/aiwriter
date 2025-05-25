@@ -14,7 +14,7 @@ export ANTHROPIC_API_KEY="sk-ant-..." # the default model is anthropic's
 # if using an openai model, use OPENAI_API_KEY, if using another provider, use "<PROVIDER_NAME>_API_KEY"
 
 # 2. running agent loop
-aiwriter agent "write an article on software engineering management extracting the absolute best insights from these articles. be concise."
+aiwriter editor "write an article on software engineering management extracting the absolute best insights from these articles. be concise."
 
 # (optional) running simple essay writer
 aiwriter write "write a short poem"
@@ -53,7 +53,7 @@ cli/non-agent use only:
 ### Modules
 ```sh
 # AI Writer Agent
-aiwriter agent "<prompt>"
+aiwriter editor "<prompt>"
 aiwriter writer "<prompt>"
 aiwriter ranker "<essay>"
 aiwriter context_builder "<prompt>"
@@ -72,38 +72,36 @@ aiwriter context_builder "<prompt>"
 ### Data Flow
 ```mermaid
 flowchart TD
-    A([URLs]) --> B(Content Builder)
-    AA([Topic]) --> B(Content Builder)
+    A([URLs]) --> B(Context Builder)
+    AA([Topic]) --> B(Context Builder)
     B --> C([Prompt])
+    B --> J(Thinker)
     C --> D(Writer)
     D --> E([Draft])
     E --> F(Ranker)
     F --> FF([Scored Draft])
     H([Criteria]) --> F
-    FF --> G{Agent Loop}
+    FF --> G{Editor}
     I([Past Runs]) --> G
     G --> B
+    G --> J
+    J --> G
 
     style B fill:#fd0795,color:black,font-weight:bold
     style D fill:#00b5d7,color:black,font-weight:bold
     style F fill:#ff9000,color:black,font-weight:bold
     style G fill:#ffb901,color:black,font-weight:bold
+    style J fill:#2a9d8f,color:black,font-weight:bold
 ```
 
 ### Modules
-- **Content Builder**
+- **Context Builder**
   - prompt builder
   - url parser
     - html-to-markdown
-    - audio-to-text (podcasts) <- out-of-scope
-    - youtube-to-text <- out-of-scope
+    - audio-to-text (podcasts) <- future
+    - youtube-to-text <- future
 - **Writer**
 - **Ranker**
-- **Agent Loop**
-
-## AI Writer tasks #todo
-- html-to-markdown url parser
-- prompt builder
-- writer
-- ranker
-- agent loop
+- **Thinker**
+- **Editor (Agent Loop)**

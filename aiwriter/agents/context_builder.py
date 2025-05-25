@@ -39,7 +39,7 @@ def save_to_file(filename, md):
     open(filepath, "w").write(md)
 
 
-def build_context(prompt):
+def build_context():
     """This function takes a prompt, reads a "context" file containing URLs
     and builds the full context for the AI writer."""
     SEPARATOR = "\n\n------------\n------------\n\n"
@@ -58,28 +58,4 @@ def build_context(prompt):
     context = f"{SEPARATOR}".join(context)
     save_to_file(CONTEXT_FULL_FILE, context)
 
-    return context + SEPARATOR + prompt
-
-def cli():
-    """If this script is run via CLI, it will read the context file,
-    build the context with prompt passed as argument and print it."""
-    import sys
-
-    if len(sys.argv) < 2:
-        print("Usage: python context_builder.py <prompt>")
-        sys.exit(1)
-
-    try:
-        context_file = open(os.path.join(CONTEXT_DIR, CONTEXT_FULL_FILE), "r")
-        print("\n\nContext file already exists, reading it...\n\n")
-        print(context_file.read())
-    except FileNotFoundError:
-        pass
-
-    prompt = sys.argv[1]
-    context = build_context(prompt)
-    print(context)
-
-if __name__ == "__main__":
-    cli()
-    
+    return context + SEPARATOR
