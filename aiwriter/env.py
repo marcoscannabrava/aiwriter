@@ -20,18 +20,46 @@ SCORES_FILE = os.getenv("AIWRITER_SCORES", "scores.txt")
 DRAFTS_DIR = os.getenv("AIWRITER_DRAFTS_DIR", "drafts")
 
 
-thinker_prompt_file = (
-    open("AIWRITER_THINKER_SYSTEM_PROMPT_FILE", "r")
-    if os.path.exists("AIWRITER_THINKER_SYSTEM_PROMPT_FILE")
-    else open(os.path.join(script_dir, "agents/thinker.prompt"), "r")
-)
-THINKER_SYSTEM_PROMPT = thinker_prompt_file.read()
-thinker_prompt_file.close()
+# ------ THINKER_SYSTEM_PROMPT ------
+DEFAULT_THINKER_SYSTEM_PROMPT = """You are an expert analyst. Your task is to extract key insights from the provided text. 
 
-writer_prompt_file = (
-    open("AIWRITER_WRITER_SYSTEM_PROMPT_FILE", "r")
-    if os.path.exists("AIWRITER_WRITER_SYSTEM_PROMPT_FILE")
-    else open(os.path.join(script_dir, "agents/writer.prompt"), "r")
+Instructions:
+- Read the text carefully.
+- Identify and list the most important insights, findings, or conclusions.
+- For each insight, provide a brief explanation or supporting evidence from the text.
+- Present your answer as a numbered list.
+- Do not include irrelevant details or copy large sections verbatim.
+- If the text lacks clear insights, state "No significant insights found."
+"""
+
+THINKER_SYSTEM_PROMPT = (
+    open("AIWRITER_THINKER_SYSTEM_PROMPT_FILE", "r").read()
+    if os.path.exists("AIWRITER_THINKER_SYSTEM_PROMPT_FILE")
+    else DEFAULT_THINKER_SYSTEM_PROMPT
 )
-WRITER_SYSTEM_PROMPT = writer_prompt_file.read()
-writer_prompt_file.close()
+
+# ------ WRITER_SYSTEM_PROMPT ------
+DEFAULT_WRITER_SYSTEM_PROMPT = """You are an expert essay writer.
+
+Context:
+{{context}}
+
+Task:
+{{task}}
+
+Requirements:
+- Length: Up to {{length}} words (approximate)
+- Style: {{style}} (e.g., formal, informal, persuasive, analytical)
+- Audience: {{audience}}
+- Structure: Introduction, body paragraphs, and conclusion
+- Cite evidence or examples where appropriate
+
+Criteria for assessment:
+{{criteria}}
+"""
+
+WRITER_SYSTEM_PROMPT = (
+    open("AIWRITER_WRITER_SYSTEM_PROMPT_FILE", "r").read()
+    if os.path.exists("AIWRITER_WRITER_SYSTEM_PROMPT_FILE")
+    else DEFAULT_WRITER_SYSTEM_PROMPT
+)

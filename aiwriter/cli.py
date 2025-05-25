@@ -77,6 +77,7 @@ DEFAULT_MAX_ITERS = 6
 
 
 @main.command()
+@click.argument("prompt")
 @click.option(
     "--max-iters",
     default=DEFAULT_MAX_ITERS,
@@ -85,9 +86,9 @@ DEFAULT_MAX_ITERS = 6
 @length_option
 @style_option
 @audience_option
-def editor(max_iters, length, style, audience):
+def editor(prompt, max_iters, length, style, audience):
     """Run the agent loop for the given prompt."""
-    agent_loop(max_iters, length, style, audience)
+    agent_loop(prompt, max_iters, length, style, audience)
     click.echo(f"Agent loop completed for prompt")
 
 

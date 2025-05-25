@@ -17,6 +17,7 @@ def all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
 
 
 def agent_loop(
+    prompt: str,
     max_iters: int = 6,
     length: int = 1000,
     style: str = "informal and analytical",
@@ -25,7 +26,7 @@ def agent_loop(
     os.makedirs(DRAFTS_DIR, exist_ok=True)
     scores = None
     FULL_CONTEXT = build_context()
-    curr_context = FULL_CONTEXT
+    curr_context = prompt + '\n\nCONTEXT\n' + FULL_CONTEXT
     for i in range(1, max_iters + 1):
         essay = write_essay(
             str(curr_context),
