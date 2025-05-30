@@ -55,7 +55,15 @@ def write(context, length, style, audience, rewrite):
 
 @main.command()
 def build():
-    """Build context from URLs file."""
+    """Build context from URLs file.
+
+    Example context file:
+    echo "
+https://example.com/article1
+https://example.com/article2
+https://example.com/article3
+" > context.txt
+    """
     context = build_context()
     click.echo(context)
 
@@ -99,15 +107,16 @@ def editor(prompt, max_iters, length, style, audience):
 def help():
     """Show detailed help information about AIWriter."""
     click.echo("AIWriter: An AI-powered essay writing and improvement tool.\n")
-    click.echo("Version 0.1.2")
-    click.echo("")
+    click.echo("Version 0.1.2\n")
+
     click.echo("Commands:")
-    click.echo("  editor   - Run the full agent loop to write and improve an essay")
-    click.echo("  write    - Generate a single essay")
-    click.echo("  rank     - Score an existing essay")
-    click.echo("  think    - Extract insights from an essay or context")
-    click.echo("  build    - Build context from URLs file")
-    click.echo("  help     - Show this help message\n")
+    click.echo("  editor            - Run the full agent loop to write and improve an essay")
+    click.echo("  write             - Generate a single essay")
+    click.echo("  rank              - Score an existing essay")
+    click.echo("  think             - Extract insights from an essay or context")
+    click.echo("  build             - Build context from URLs file")
+    click.echo("  help              - Show this help message")
+    click.echo("  [command] --help  - Show specific command help\n")
     
     click.echo("Environment Variables:")
     click.echo("  ANTHROPIC_API_KEY - Required API key for accessing AI models")
@@ -119,6 +128,7 @@ def help():
     click.echo("  aiwriter editor \"Write an article about climate change\"")
     click.echo("  aiwriter write \"Write a poem about the ocean\" --length 500 --style poetic")
     click.echo("  aiwriter build < urls.txt > context.md")
+
 
 
 if __name__ == "__main__":
