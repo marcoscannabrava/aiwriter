@@ -1,75 +1,111 @@
-# Agentic AI Writer
+# AIWriter: AI-Powered Essay Writing and Improvement Tool
 
-The agentic writer will take in a **prompt**, a list of URLs (**context**), and a list of writing **criteria** (e.g. conciseness, accuracy).
+AIWriter is an intelligent writing assistant that leverages AI to write, evaluate, and iteratively improve essays and articles. Using an agent-based approach, it takes a prompt and relevant context, then refines drafts until they meet quality criteria.
 
-It will first parse all the **context** URLs to markdown, and include them with the input **prompt**. It will generate a draft and score it according to the **criteria**.
+## Features
 
-This loop will repeat until the draft achieves a sufficiently high score in all criteria or until the max number of iterations is reached.
+- **Autonomous Essay Improvement**: Writes and refines drafts until they meet quality standards
+- **Context Builder**: Fetches and parses content from URLs to use as reference material
+- **Multi-criteria Evaluation**: Scores essays on clarity, conciseness, relevance, engagement, and accuracy
+- **Insight Generator**: Analyzes drafts and suggests specific improvements
+- **Customizable Output**: Control essay length, style, and target audience
 
-## Get started
+## Installation
 
-``` sh
-# 1. set ANTHROPIC_API_KEY
+```bash
+pip install aiwriter
+```
+
+## Quick Start
+
+```bash
+# Set your API key
 export ANTHROPIC_API_KEY="sk-ant-..." # the default model is anthropic's
 # if using an openai model, use OPENAI_API_KEY, if using another provider, use "<PROVIDER_NAME>_API_KEY"
 
-# 2. running agent loop
-aiwriter editor "write an article on software engineering management extracting the absolute best insights from these articles. be concise."
-
-# (optional) running simple essay writer
-aiwriter write "write a short poem"
-
-# (optional) add context URLs to be parsed and included in the prompt
-echo "
-blog.com/post1
-blog.com/post2
-blog.com/post3" > context.txt
-
-# (optional) add criteria to favor in the agent's writing
-echo "clarity,conciseness,relevance,engagement,accuracy" > criteria.txt  # this is the default criteria
-
-# (optional) change the LLM model
-export AIWRITER_MODEL="anthropic/claude-3-7-sonnet-latest"  # this is the default model
+# Run the agent loop to write and iteratively improve an essay
+aiwriter editor "Write an article about climate change solutions"
 ```
 
-## API
+## Core Commands
+
+```bash
+# Full agent loop - writes and iteratively improves essay
+aiwriter editor "Write an article about renewable energy" --length 1500
+
+# Single essay generation without iteration
+aiwriter write "Write a poem about the ocean" --style poetic --audience "children"
+
+# Score an existing essay
+aiwriter rank "$(cat my_essay.txt)"
+
+# Extract insights from an essay
+aiwriter think "$(cat my_essay.txt)"
+
+# Build context from a list of URLs
+aiwriter build < urls.txt > context.md
+
+# Show detailed help
+aiwriter help
+```
+
+## Using Context from URLs
+
+You can provide a list of URLs to be used as source material for your essay:
+
+```bash
+# Create a file with URLs (one per line)
+echo "
+https://example.com/article1
+https://example.com/article2
+https://example.com/article3
+" > context.txt
+
+# Run with this context
+aiwriter editor "Summarize the key points from these articles"
+```
+
+## Customizing the Criteria
+
+By default, essays are scored on clarity, conciseness, relevance, engagement, and accuracy. You can customize this:
+
+```bash
+# Create a custom criteria file
+echo "clarity,innovation,technical_depth,practical_application" > criteria.txt
+
+# Set the environment variable
+export AIWRITER_CRITERIA="criteria.txt"
+
+# Run with custom criteria
+aiwriter editor "Write a technical deep-dive on machine learning"
+```
+
+## Configuration
 
 ### Environment Variables
-Required:
-- `ANTHROPIC_API_KEY` or another model provider API Key if default `AIWRITER_MODEL` is changed
 
-Optional:
-- `AIWRITER_MODEL` determines the model to be used
-- `AIWRITER_CONTEXT_FILE` filename for input context urls file to be used in the first prompt
-- `AIWRITER_CONTEXT_FULL_FILE` filename for output markdown context from parsing context urls
-- `AIWRITER_CONTEXT_DIR` directory where input and output context files
-- `AIWRITER_CRITERIA` filename for criteria file with comma-separated list of criteria to use when scoring
-- `AIWRITER_DRAFTS_DIR` directory for agent outputs
+| Variable | Description | Default |
+|----------|-------------|--------|
+| `ANTHROPIC_API_KEY` | API key for Anthropic | *(required)* |
+| `AIWRITER_MODEL` | AI model to use | `anthropic/claude-3-7-sonnet-latest` |
+| `AIWRITER_CONTEXT_FILE` | Input file with URLs | `context.txt` |
+| `AIWRITER_CONTEXT_FULL_FILE` | Output file for parsed context | `full_context.txt` |
+| `AIWRITER_CONTEXT_DIR` | Directory for context files | `context/` |
+| `AIWRITER_CRITERIA` | Criteria file path | `criteria.txt` |
+| `AIWRITER_DRAFTS_DIR` | Directory for draft outputs | `drafts/` |
 
-cli/non-agent use only:
-- `AIWRITER_ESSAY_FILE` filename for outputs from ranker and writer functions
-- `AIWRITER_SCORES` filename for output scores file
+## How It Works
 
-### Modules
-```sh
-# AI Writer Agent
-aiwriter editor "<prompt>"
-aiwriter writer "<prompt>"
-aiwriter ranker "<essay>"
-aiwriter context_builder "<prompt>"
-```
+AIWriter uses a multi-agent system to progressively improve essays:
 
-## How it works
+1. **Context Builder**: Parses URLs and builds initial context
+2. **Writer**: Generates an essay based on the prompt and context
+3. **Ranker**: Evaluates the essay against multiple criteria
+4. **Thinker**: Analyzes the essay and provides insights for improvement 
+5. **Editor**: Orchestrates the entire process, managing iterations
 
-### Data Model
-- Input
-  - URLs
-  - Prompt *(i.e. topic)*
-  - Criteria
-- Output
-  - Content *(i.e. scored drafts)*
+### Architecture
 
-### Data Flow
 ```mermaid
 flowchart TD
     A([URLs]) --> B(Context Builder)
@@ -94,14 +130,6 @@ flowchart TD
     style J fill:#2a9d8f,color:black,font-weight:bold
 ```
 
-### Modules
-- **Context Builder**
-  - prompt builder
-  - url parser
-    - html-to-markdown
-    - audio-to-text (podcasts) <- future
-    - youtube-to-text <- future
-- **Writer**
-- **Ranker**
-- **Thinker**
-- **Editor (Agent Loop)**
+## License
+
+GPL 3.0

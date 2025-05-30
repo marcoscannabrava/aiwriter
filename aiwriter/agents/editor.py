@@ -9,11 +9,18 @@ SCORE_THRESHOLD = 8
 
 
 def all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
+    """Check if all scores are greater than the threshold."""
     return all(
         float(v) > threshold
         for v in scores.__dict__.values()
         if isinstance(v, (int, float))
     )
+
+
+def save_to_file(path, content):
+    """Save content to a file."""
+    with open(path, "w") as f:
+        f.write(str(content))
 
 
 def agent_loop(
@@ -23,7 +30,17 @@ def agent_loop(
     style: str = "informal and analytical",
     audience: str = "sophisticated readers",
 ):
+    """Main agent loop that iteratively improves an essay based on scores and insights.
+    
+    Args:
+        prompt (str): The topic or task for the essay
+        max_iters (int): Maximum number of iterations to run
+        length (int): Target length for the essay in words
+        style (str): Writing style to use
+        audience (str): Target audience for the essay
+    """
     os.makedirs(DRAFTS_DIR, exist_ok=True)
+    
     scores = None
     FULL_CONTEXT = build_context()
     curr_context = prompt + '\n\nCONTEXT\n' + FULL_CONTEXT
@@ -34,16 +51,15 @@ def agent_loop(
             style=style,
             audience=audience,
             rewrite=i != 1,
-            )
+        )
         curr_context = essay
+        
         draft_path = f"{DRAFTS_DIR}/draft_{i}.md"
-        with open(draft_path, "w") as f:
-            f.write(str(essay))
+        save_to_file(draft_path, str(essay))
 
         scores = rank_essay(str(essay))
         score_path = f"{DRAFTS_DIR}/draft_score_{i}.md"
-        with open(score_path, "w") as f:
-            f.write(str(scores))
+        save_to_file(score_path, str(scores))
 
         print(f"Draft #{i} - {curr_context.title}")
         print(f"Scores:\n\n{scores}")
@@ -53,8 +69,12 @@ def agent_loop(
             break
 
         if i > 2:
-            insights = extract_insights("SOURCE MATERIAL\n\n" + FULL_CONTEXT + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context) + "\n\n" + str(scores))
+            insights = extract_insights(
+                f"SOURCE MATERIAL\n\n{FULL_CONTEXT}\n\n---\n\n"
+                f"ESSAY TO BE REWRITTEN\n\n{str(curr_context)}\n\n{str(scores)}"
+            )
+            
             insights_path = f"{DRAFTS_DIR}/draft_insights_{i}.md"
-            with open(insights_path, "w") as f:
-                f.write(str(insights))
-            curr_context = "INSIGHTS\n\n" + str(insights) + "\n\n---\n\n ESSAY TO BE REWRITTEN\n\n" + str(curr_context)
+            save_to_file(insights_path, insights)
+            
+            curr_context = f"INSIGHTS\n\n{str(insights)}\n\n---\n\n ESSAY TO BE REWRITTEN\n\n{str(curr_context)}"

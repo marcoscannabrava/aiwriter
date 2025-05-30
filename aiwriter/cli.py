@@ -10,7 +10,10 @@ from aiwriter.agents.thinker import extract_insights
 
 @click.group()
 def main():
-    """CLI for the AI Writer."""
+    """AIWriter: An AI-powered essay writing and improvement tool.
+    
+    This tool uses AI agents to write, evaluate, and iteratively improve essays.
+    """
     pass
 
 length_option = click.option(
@@ -90,6 +93,32 @@ def editor(prompt, max_iters, length, style, audience):
     """Run the agent loop for the given prompt."""
     agent_loop(prompt, max_iters, length, style, audience)
     click.echo(f"Agent loop completed for prompt")
+
+
+@main.command()
+def help():
+    """Show detailed help information about AIWriter."""
+    click.echo("AIWriter: An AI-powered essay writing and improvement tool.\n")
+    click.echo("Version 0.1.2")
+    click.echo("")
+    click.echo("Commands:")
+    click.echo("  editor   - Run the full agent loop to write and improve an essay")
+    click.echo("  write    - Generate a single essay")
+    click.echo("  rank     - Score an existing essay")
+    click.echo("  think    - Extract insights from an essay or context")
+    click.echo("  build    - Build context from URLs file")
+    click.echo("  help     - Show this help message\n")
+    
+    click.echo("Environment Variables:")
+    click.echo("  ANTHROPIC_API_KEY - Required API key for accessing AI models")
+    click.echo("  AIWRITER_MODEL    - Model to use (default: anthropic/claude-3-sonnet-latest)")
+    click.echo("  AIWRITER_CONTEXT_FILE - Input URLs file (default: context.txt)")
+    click.echo("  AIWRITER_DRAFTS_DIR   - Output directory for drafts (default: drafts/)\n")
+    
+    click.echo("Examples:")
+    click.echo("  aiwriter editor \"Write an article about climate change\"")
+    click.echo("  aiwriter write \"Write a poem about the ocean\" --length 500 --style poetic")
+    click.echo("  aiwriter build < urls.txt > context.md")
 
 
 if __name__ == "__main__":
