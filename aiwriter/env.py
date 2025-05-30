@@ -49,9 +49,9 @@ Task:
 
 Requirements:
 - Length: Up to {{length}} words (approximate)
-- Style: {{style}} (e.g., formal, informal, persuasive, analytical)
+- Style: {{style}}
 - Audience: {{audience}}
-- Structure: Introduction, body paragraphs, and conclusion
+- Structure: Introduction, body paragraphs, and conclusion. There is no need to name them explicitly.
 - Cite evidence or examples where appropriate
 
 Criteria for assessment:
