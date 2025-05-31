@@ -2,7 +2,7 @@ import os
 import requests
 import subprocess
 from bs4 import BeautifulSoup
-from aiwriter.env import CONTEXT_FILE, CONTEXT_FULL_FILE, CONTEXT_DIR
+from aiwriter.env import CONTEXT_FILE, CONTEXT_FULL_FILE
 
 
 def parse_url(url) -> str:
@@ -30,19 +30,17 @@ def pandoc_html2md(html: str) -> str:
 
 
 def save_to_file(filename, md):
-    """This function saves the content to a file in the context directory
-    if AIWRITER_CONTEXT_DIR env var is not set to empty."""
-    if not CONTEXT_DIR:
-        return
-    os.makedirs(CONTEXT_DIR, exist_ok=True)
-    filepath = os.path.join(CONTEXT_DIR, filename)
-    open(filepath, "w").write(md)
+    open(filename, "w").write(md)
 
 
-def build_context():
+def build_context(overwrite: bool = False) -> str:
     """This function takes a prompt, reads a "context" file containing URLs
     and builds the full context for the AI writer."""
     SEPARATOR = "\n\n------------\n------------\n\n"
+
+    if os.path.exists(CONTEXT_FULL_FILE) and not overwrite:
+        with open(CONTEXT_FULL_FILE, "r") as f:
+            return f.read() + SEPARATOR
 
     with open(CONTEXT_FILE, "r") as f:
         urls = f.readlines()

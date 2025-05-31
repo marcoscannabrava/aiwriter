@@ -90,7 +90,6 @@ aiwriter editor "Write a technical deep-dive on machine learning"
 | `AIWRITER_MODEL` | AI model to use | `anthropic/claude-sonnet-4-20250514` |
 | `AIWRITER_CONTEXT_FILE` | Input file with URLs | `context.txt` |
 | `AIWRITER_CONTEXT_FULL_FILE` | Output file for parsed context | `full_context.txt` |
-| `AIWRITER_CONTEXT_DIR` | Directory for context files | `context/` |
 | `AIWRITER_CRITERIA` | Criteria file path | `criteria.txt` |
 | `AIWRITER_DRAFTS_DIR` | Directory for draft outputs | `drafts/` |
 

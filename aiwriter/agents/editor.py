@@ -5,17 +5,6 @@ from aiwriter.agents.ranker import rank_essay
 from aiwriter.agents.thinker import extract_insights
 from aiwriter.env import DRAFTS_DIR
 
-SCORE_THRESHOLD = 8
-
-
-def all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
-    """Check if all scores are greater than the threshold."""
-    return all(
-        float(v) > threshold
-        for v in scores.__dict__.values()
-        if isinstance(v, (int, float))
-    )
-
 
 def save_to_file(path, content):
     """Save content to a file."""
@@ -64,8 +53,8 @@ def agent_loop(
         print(f"Draft #{i} - {curr_context.title}")
         print(f"Scores:\n\n{scores}")
 
-        if all_scores_greater_than_threshold(scores, threshold=SCORE_THRESHOLD):
-            print(f"All scores above {SCORE_THRESHOLD} at iteration {i}. Exiting loop.")
+        if scores.all_scores_greater_than_threshold():
+            print(f"All scores above score threshold at iteration {i}. Exiting loop.")
             break
 
         if i > 2:

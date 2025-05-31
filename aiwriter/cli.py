@@ -107,7 +107,7 @@ def editor(prompt, max_iters, length, style, audience):
 def help():
     """Show detailed help information about AIWriter."""
     click.echo("AIWriter: An AI-powered essay writing and improvement tool.\n")
-    click.echo("Version 0.1.2\n")
+    click.echo("Version 0.1.3\n")
 
     click.echo("Commands:")
     click.echo("  editor            - Run the full agent loop to write and improve an essay")
@@ -119,8 +119,8 @@ def help():
     click.echo("  [command] --help  - Show specific command help\n")
     
     click.echo("Environment Variables:")
-    click.echo("  ANTHROPIC_API_KEY - Required API key for accessing AI models")
-    click.echo("  AIWRITER_MODEL    - Model to use (default: anthropic/claude-3-sonnet-latest)")
+    click.echo("  ANTHROPIC_API_KEY     - Required API key for accessing AI models")
+    click.echo("  AIWRITER_MODEL        - Model to use (default: anthropic/claude-3-sonnet-latest)")
     click.echo("  AIWRITER_CONTEXT_FILE - Input URLs file (default: context.txt)")
     click.echo("  AIWRITER_DRAFTS_DIR   - Output directory for drafts (default: drafts/)\n")
     
